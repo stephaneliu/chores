@@ -1,0 +1,45 @@
+image: "ruby:2.5"
+
+services:
+  - postgres:latest
+
+variables:
+  POSTGRES_DB: test_db
+  POSTGRES_USER: runner
+  POSTGRES_PASSWORD: ""
+
+test:
+  stage: test
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq nodejs
+    - ruby -v
+    - which ruby
+    - gem install bundler --no-ri --no-rdoc
+    - RAILS_ENV=test bundle install --jobs $(nproc) "${FLAGS[@]}"
+    - cp config/database.yml.gitlab config/database.yml
+    - RAILS_ENV=test bundle exec rake db:drop db:create db:schema:load
+  script:
+    - RAILS_ENV=test bundle exec rspec
+    - bundle exec pronto run -c=origin/master --exit-code
+
+staging:
+  stage: deploy
+  environment:
+    name: staging
+    url: https://liuchores-staging.herokuapp.com
+  script:
+    - gem install dpl
+    - dpl --provider=heroku --app=liuchores-staging --api-key=$HEROKU_API_KEY
+  only:
+    - master
+
+staging:
+  stage: deploy
+  environment:
+    name: production
+    url: https://liuchores-production.herokuapp.com
+  script:
+    - gem install dpl
+    - dpl --provider=heroku --app=liuchores-production --api-key=$HEROKU_API_KEY
+  only:
+    - tags
