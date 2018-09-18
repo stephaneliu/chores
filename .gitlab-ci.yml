@@ -11,7 +11,7 @@ variables:
 test:
   stage: test
   before_script:
-    - apt-get update -qq && apt-get install -y -qq nodejs
+    - apt-get update -qq && apt-get install -y -qq nodejs cmake
     - ruby -v
     - which ruby
     - gem install bundler --no-ri --no-rdoc
