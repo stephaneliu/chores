@@ -77,3 +77,8 @@ group :red_green_refactor, halt_on_fail: true do
     watch('Gemfile')
   end
 end
+
+guard 'ctags-bundler', :src_path => ["app", "lib", "spec/support"] do
+  watch(/^(app|lib|spec\/support)\/.*\.rb$/)
+  watch('Gemfile.lock')
+end

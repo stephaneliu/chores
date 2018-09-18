@@ -149,6 +149,9 @@ GEM
       brakeman (>= 2.1.1)
       guard (>= 2.0.0)
     guard-compat (1.2.1)
+    guard-ctags-bundler (1.4.0)
+      guard (>= 2.0)
+      guard-compat (>= 0.1.0)
     guard-reek (1.2.0)
       guard-compat (~> 1.1)
       reek
@@ -438,6 +441,7 @@ DEPENDENCIES
   foreman
   guard
   guard-brakeman
+  guard-ctags-bundler
   guard-reek
   guard-rspec
   guard-rubocop
@@ -481,4 +485,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   1.16.4
+   1.16.5

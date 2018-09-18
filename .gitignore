@@ -28,3 +28,5 @@
 ./coverage
 ./.env
 ./config/initializers/*
+gems.tags
+tags

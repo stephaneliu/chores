@@ -67,6 +67,7 @@ group :development do
   gem 'foreman'
   gem 'guard'
   gem 'guard-brakeman', require: false
+  gem 'guard-ctags-bundler'
   gem 'guard-reek'
   gem 'guard-rspec'
   gem 'guard-rubocop'
