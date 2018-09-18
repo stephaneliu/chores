@@ -25,6 +25,7 @@ before_script:
   # Project Setup
   - gem install bundler --no-ri --no-rdoc
   - bundle check || bundle install --jobs $(nproc)  
+  - cp config/database.yml.gitlab config/database.yml
   - bundle exec rails db:create RAILS_ENV=test 
   - bundle exec rails db:schema:load RAILS_ENV=test
 
