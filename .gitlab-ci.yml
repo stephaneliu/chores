@@ -41,6 +41,7 @@ Deploy Staging:
   script:
     - ./bin/setup_heroku
     - dpl --provider=heroku --app=liuchores-staging --api-key=$HEROKU_API_KEY
+    - heroku run rake db:migrate --exit-code --app liuchores-staging
   only:
     - master
 
@@ -53,5 +54,6 @@ Deploy Production:
   script:
     - ./bin/setup_heroku
     - dpl --provider=heroku --app=liuchores-production --api-key=$HEROKU_API_KEY
+    - heroku run rake db:migrate --exit-code --app liuchores-staging
   only:
     - tags
