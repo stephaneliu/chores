@@ -24,7 +24,7 @@ before_script:
   
   # Project Setup
   - gem install bundler --no-ri --no-rdoc
-  - bundle install --jobs$(nproc)  
+  - bundle check || bundle install --jobs $(nproc)  
   - bundle exec rails db:create RAILS_ENV=test 
   - bundle exec rails db:schema:load RAILS_ENV=test
 
