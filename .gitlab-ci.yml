@@ -20,7 +20,6 @@ services:
     - apt-get update -qq && apt-get install -y -qq nodejs cmake
     
     # Project Setup
-    - rm -rf cache/bundle
     - gem install bundler --no-ri --no-rdoc
     - bundle check || bundle install --path=cache/bundler --jobs $(nproc) "${FLAGS[@]}"
     - cp config/database.yml.gitlab config/database.yml
@@ -41,14 +40,12 @@ stages:
 
 test:
   stage: test
-  <<: *cache_bundler
   <<: *setup_test_env
   script:
     - RAILS_ENV=test bundle exec rspec
 
 Pronto:
   stage: lint
-  <<: *cache_bundler
   <<: *setup_test_env
   allow_failure: true
   script:
