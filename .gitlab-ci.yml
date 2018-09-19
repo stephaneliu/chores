@@ -3,9 +3,28 @@ image: "ruby:2.5"
 services:
   - postgres:latest
 
-cache:
-  paths:
-    - vendor/bundle
+.cache_bundler: &cache_bundler
+  cache:
+    untracked: true
+    key: "$CI_BUILD_REF_NAME"
+    paths:
+      - cache/bundle/
+
+.setup_test_env: &setup_test_env
+  before_script:
+    # Check installation
+    - ruby -v
+    - which ruby
+
+    # Install dependencies
+    - apt-get update -qq && apt-get install -y -qq nodejs cmake
+    
+    # Project Setup
+    - gem install bundler --no-ri --no-rdoc
+    - bundle install --path=cache/bundler --jobs $(nproc) "${FLAGS[@]}"
+    - cp config/database.yml.gitlab config/database.yml
+    - bundle exec rails db:create RAILS_ENV=test 
+    - bundle exec rails db:schema:load RAILS_ENV=test
 
 variables:
   POSTGRES_DB: test_db
@@ -14,21 +33,6 @@ variables:
   BUNDLE_PATH: vendor/bundle
   DISABLE_SPRING: 1
 
-before_script:
-  # Check installation
-  - ruby -v
-  - which ruby
-
-  # Install dependencies
-  - apt-get update -qq && apt-get install -y -qq nodejs cmake
-  
-  # Project Setup
-  - gem install bundler --no-ri --no-rdoc
-  - bundle check || bundle install --jobs $(nproc)  
-  - cp config/database.yml.gitlab config/database.yml
-  - bundle exec rails db:create RAILS_ENV=test 
-  - bundle exec rails db:schema:load RAILS_ENV=test
-
 stages:
   - test
   - lint
@@ -36,11 +40,15 @@ stages:
 
 test:
   stage: test
+  <<: *cache_bundler
+  <<: *setup_test_env
   script:
     - RAILS_ENV=test bundle exec rspec
 
 Pronto:
   stage: lint
+  <<: *cache_bundler
+  <<: *setup_test_env
   allow_failure: true
   script:
     - bundle exec pronto run -c=origin/master --exit-code
